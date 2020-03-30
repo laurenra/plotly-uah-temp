@@ -1,0 +1,12 @@
+echo "Save files to deploy in plotly-uah-temp.tar."
+# Start from parent directory to include the plotly-uah-temp directory in the tarball
+cd ..
+tar cvf plotly-uah-temp/plotly-uah-temp.tar plotly-uah-temp/uah-temp.html
+
+tar rvf plotly-uah-temp/plotly-uah-temp.tar plotly-uah-temp/js/uah-temp.js
+# tar rvf plotly-uah-temp/plotly-uah-temp.tar plotly-uah-temp/js/lib/plotly-latest.min.js
+
+tar rvf plotly-uah-temp/plotly-uah-temp.tar plotly-uah-temp/data/uah-monthly-global.csv
+
+# Return to the project directory
+cd plotly-uah-temp
