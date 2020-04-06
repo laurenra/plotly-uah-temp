@@ -23,6 +23,7 @@ var serverRoot = location.protocol + "//" + location.host + pathOnly;
  */
 
 uahTempTimeSeriesGlobal();
+uahTimeSeriesTest();
 
 /* Current Plotly.js version */
 console.log( Plotly.BUILD );
@@ -152,7 +153,21 @@ function uahTempTimeSeriesGlobal() {
         };
 
         var layout = {
-            title: 'UAH Temperature Time Series',
+            // title: 'UAH Temperature Time Series',
+            title: {
+                text: 'UAH Temperature Time Series',
+                font: {
+                    size: 17,
+                    // color: 'LightSeaGreen'
+                    color: 'MediumSeaGreen'
+                    // color: 'DarkSeaGreen'
+                    // color: 'SeaGreen'
+                    // color: 'AquaMarine'
+                    // color: 'MediumAquaMarine'
+                },
+                x: 0.5,
+                y: 1.15
+            },
             annotations: [{
                 text: '(December, 1978&#8211;present)',
                 font: {
@@ -160,8 +175,7 @@ function uahTempTimeSeriesGlobal() {
                     // color: '#eb6600'
                 },
                 showarrow: false,
-                align: 'center',
-                x: 0.6,
+                x: 0.56,
                 y: 1.15,
                 xref: 'paper',
                 yref: 'paper'
@@ -177,6 +191,115 @@ function uahTempTimeSeriesGlobal() {
         };
 
         Plotly.newPlot('uah-temp-series-global', data, layout, config);
+
+    })
+}
+
+
+/**
+ * UAH Global Satellite Temperature
+ *
+ * url query parameters show/hide plot lines
+ *
+ * ga, gl, go = global All, Land, Oceans
+ */
+function uahTimeSeriesTest() {
+
+    /**
+     * Global temp
+     * no param: visible = true
+     * gAll:     visible = true
+     * gAll=0:   visible = 'legendonly'
+     * gAll=1:   visible = true
+     */
+
+    // var gAllDisplay = displayPlotLine('gAll', true);
+    // var tAllDisplay = displayPlotLine('tAll', false);
+
+    /* Get data and build plot(s). */
+    // Plotly.d3.csv("http://localhost:8888/data/uah-monthly.csv", function(err, rows){
+    // Plotly.d3.csv(serverRoot + "/data/uahncdc_lt_6.0_monthly.csv", function(err, rows){
+    Plotly.d3.csv(serverRoot + "/data/uah.global.ts.csv", function(err, rows){
+        // Plotly.d3.dsv(" ", "http://localhost:8888/data/uah-monthly-date.txt", function(err, rows){
+        // Plotly.d3.dsv("|", "http://localhost:8888/data/uah-monthly-date-delim.txt", function(err, rows){
+
+        function unpack(rows, key) {
+            return rows.map(function(row) { return row[key]; });
+        }
+
+        var yearsArray = unpack(rows, 'index');
+        var yaLen = yearsArray.length;
+        var yaFirst = yearsArray[0];
+        var yaLast = yearsArray[yaLen - 1];
+        var dateFirst = new Date(yaFirst);
+        var dateLast = new Date(yaLast);
+        // console("First date:" + dateFirst.)
+
+
+        var traceGlobal = {
+            type: "scatter",
+            mode: "lines",
+            name: 'Global Average',
+            x: unpack(rows, 'index'),
+            y: unpack(rows, 'value'),
+            visible: displayPlotLine('ga', true) ? true : 'legendonly',
+            // visible: urlParms.get('gAll') ?
+            // line: {color: '#008000'}
+            line: {color: '#555555'}
+            // line: {color: '[rgb(171,0,16)]'}
+        };
+
+
+        var data = [traceGlobal];
+
+        var config = {
+            toImageButtonOptions: {
+                format: 'svg', // one of png, svg, jpeg, webp
+                filename: 'custom_image',
+                height: 500,
+                width: 1300,
+                scale: 1 // Multiply title/legend/axis/canvas sizes by this factor
+            }
+        };
+
+        var layout = {
+            // title: 'UAH Time Series Test',
+            title: {
+                text: 'UAH Temperature Time Series',
+                font: {
+                    size: 17,
+                    // color: 'Coral'
+                    color: 'Salmon'
+                    // color: 'LightSalmon'
+                    // color: 'DarkSalmon'
+                },
+                x: 0.5,
+                y: 1.15
+            },
+            annotations: [{
+                text: '(December, 1978&#8211;present)',
+                font: {
+                    size: 13
+                    // color: '#eb6600'
+                },
+                showarrow: false,
+                align: 'center',
+                x: 0.5,
+                y: 1.15,
+                xref: 'paper',
+                yref: 'paper'
+            }],
+            xaxis: {
+                // title: 'Year (December 1978&ndash;present)'
+                title: 'Date'
+                // title: 'Year (December 1978&#x2013;present)'
+            },
+            yaxis: {
+                title: 'Temperature &deg;C'
+            }
+        };
+
+        Plotly.newPlot('uah-time-series-test', data, layout, config);
 
     })
 }
